@@ -1,0 +1,8 @@
+{
+  "name": " Service Elektronik Bang Ipul",
+  "description": "Professional home appliance repair services and second-hand electronic marketplace with a dedicated blog for maintenance tips.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
