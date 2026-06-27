@@ -9,7 +9,7 @@ const About: React.FC = () => {
           <div className="lg:w-1/2">
             <div className="relative inline-block">
               <img 
-                src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=800" 
+                src="https://github.com/user-attachments/assets/546bb675-5332-4a64-86e4-fadd76a64270" 
                 alt="Founder" 
                 className="rounded-3xl shadow-2xl relative z-10 w-full"
               />
@@ -18,13 +18,10 @@ const About: React.FC = () => {
           </div>
           <div className="lg:w-1/2">
             <span className="text-amber-600 font-bold uppercase tracking-widest text-sm mb-4 block">Kisah Kami</span>
-            <h2 className="heading-font text-5xl text-blue-950 mb-8">Berawal Dari Meja Makan, Kini Melayani Seluruh Kota.</h2>
+            <h2 className="heading-font text-5xl text-blue-950 mb-8">Berawal Dari Toko Kecil, Kini Melayani Seluruh Kota.</h2>
             <div className="space-y-6 text-slate-600 leading-relaxed">
               <p>
-                Service Elektronik Bang Ipul didirikan oleh Ipul, seorang lulusan teknik elektro yang memiliki hasrat besar untuk membantu tetangganya memperbaiki peralatan rumah tangga.
-              </p>
-              <p>
-                Dengan filosofi "Jujur itu Berkah", Bang Ipul membangun reputasinya lewat pelayanan yang transparan dan hasil kerja yang rapi. Apa yang dimulai sebagai bengkel kecil di garasi rumah, kini telah berkembang menjadi pusat servis elektronik terpercaya.
+                  Selamat datang di <strong>Service Elektronik Bang Ipul</strong>, solusi terpercaya untuk perbaikan berbagai peralatan rumah tangga Anda. Berdiri sejak tahun <strong>2002</strong>, kami telah mendedikasikan diri selama lebih dari dua dekade untuk memberikan layanan reparasi yang berkualitas, cepat, dan diandalkan oleh masyarakat. Keberlanjutan usaha kami hingga hari ini adalah bukti nyata dari komitmen kami dalam menjaga kepuasan setiap pelanggan.
               </p>
               <div className="grid grid-cols-2 gap-8 pt-6">
                 <div>

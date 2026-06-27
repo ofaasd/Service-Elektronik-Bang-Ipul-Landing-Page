@@ -1,0 +1,162 @@
+{
+  "entities": {
+    "ContactQuery": {
+      "title": "ContactQuery",
+      "description": "A service message or contact query sent by a potential customer.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the customer."
+        },
+        "phone": {
+          "type": "string",
+          "description": "WhatsApp/Phone number of the customer."
+        },
+        "deviceType": {
+          "type": "string",
+          "description": "The category of the electronic device."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the damage or work required."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp of when this inquiry was submitted."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "contacted", "completed"],
+          "description": "Current status of this service request."
+        }
+      },
+      "required": ["name", "phone", "deviceType", "description", "createdAt", "status"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "A product available for sell in the store.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "The unique numerical identifier."
+        },
+        "name": {
+          "type": "string",
+          "description": "The product name."
+        },
+        "price": {
+          "type": "number",
+          "description": "The product price in IDR."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category of the product."
+        },
+        "condition": {
+          "type": "string",
+          "enum": ["Like New", "Good", "Fair"],
+          "description": "Condition of the secondhand electronic."
+        },
+        "image": {
+          "type": "string",
+          "description": "The cover image URL."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the product."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["tersedia", "sold out", "draft"],
+          "description": "Availability status of the product in store or back-office draft status."
+        }
+      },
+      "required": ["id", "name", "price", "category", "condition", "image", "description", "status"]
+    },
+    "BlogPost": {
+      "title": "BlogPost",
+      "description": "An educational or tips article published on the website.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "The unique numerical identifier."
+        },
+        "title": {
+          "type": "string",
+          "description": "The article's title."
+        },
+        "excerpt": {
+          "type": "string",
+          "description": "A short summary of the article."
+        },
+        "date": {
+          "type": "string",
+          "description": "The text representation of the publish date."
+        },
+        "author": {
+          "type": "string",
+          "description": "The author name of the blog post."
+        },
+        "image": {
+          "type": "string",
+          "description": "The featured image URL."
+        },
+        "content": {
+          "type": "string",
+          "description": "Full HTML or plain text markdown content of the post."
+        }
+      },
+      "required": ["id", "title", "excerpt", "date", "author", "image", "content"]
+    },
+    "Testimonial": {
+      "title": "Testimonial",
+      "description": "A review or recommendation written by a satisfied customer.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "The unique numerical ID."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the reviewer."
+        },
+        "comment": {
+          "type": "string",
+          "description": "The text comment or testimonial."
+        },
+        "rating": {
+          "type": "integer",
+          "description": "Bintang rating between 1 and 5."
+        },
+        "image": {
+          "type": "string",
+          "description": "Avatar image URL."
+        }
+      },
+      "required": ["id", "name", "comment", "rating", "image"]
+    }
+  },
+  "firestore": {
+    "/contacts/{contactId}": {
+      "schema": "ContactQuery",
+      "description": "Stores user contact messages and service history inquiries."
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Stores secondhand products, items for sale, and inventory listings."
+    },
+    "/blogs/{blogId}": {
+      "schema": "BlogPost",
+      "description": "Stores blog articles and repair tips."
+    },
+    "/testimonials/{testimonialId}": {
+      "schema": "Testimonial",
+      "description": "Stores verified parent and customer reviews of Bang Ipul."
+    }
+  }
+}

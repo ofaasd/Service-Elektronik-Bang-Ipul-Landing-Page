@@ -17,7 +17,7 @@ const Hero: React.FC<HeroProps> = ({ navigate }) => {
         <div className="flex flex-col md:flex-row items-center gap-12">
           <div className="md:w-3/5 text-center md:text-left">
             <span className="inline-block px-4 py-1.5 bg-amber-100 text-amber-700 rounded-full text-xs font-bold uppercase tracking-widest mb-6">
-              Terpercaya Sejak 2008
+              Terpercaya Sejak 2002
             </span>
             <h1 className="heading-font text-5xl md:text-7xl text-blue-950 leading-[1.1] mb-8">
               Solusi Cerdas Untuk <span className="text-amber-600 underline decoration-amber-200 decoration-8 underline-offset-8">Elektronik</span> Anda.
@@ -46,7 +46,7 @@ const Hero: React.FC<HeroProps> = ({ navigate }) => {
              <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-amber-600 rounded-3xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
                 <img 
-                  src="https://images.unsplash.com/photo-1558389186-438424b00a32?auto=format&fit=crop&q=80&w=600" 
+                  src="https://github.com/user-attachments/assets/e44812ee-5395-487c-a375-834c24ce11e1" 
                   alt="Technician Expert" 
                   className="relative rounded-3xl shadow-xl w-full object-cover aspect-[4/5]"
                 />

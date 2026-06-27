@@ -1,10 +1,10 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
-
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+import { GoogleGenAI } from "@google/genai";
 
 export async function getRepairAdvice(appliance: string, symptom: string) {
   try {
+    // Selalu inisialisasi tepat sebelum pemanggilan untuk memastikan API Key terbaru
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: `User has a problem with their ${appliance}. Symptom: ${symptom}. 
@@ -25,6 +25,7 @@ export async function getRepairAdvice(appliance: string, symptom: string) {
 
 export async function generateProductDescription(productName: string) {
   try {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: `Create a compelling product description for a second-hand electronic item: ${productName}. 

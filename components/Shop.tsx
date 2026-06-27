@@ -1,18 +1,23 @@
 
 import React, { useState } from 'react';
 import { PRODUCTS } from '../constants';
+import { Product } from '../types';
 
 interface ShopProps {
   onAddToCart: () => void;
+  products?: Product[];
 }
 
-const Shop: React.FC<ShopProps> = ({ onAddToCart }) => {
+const Shop: React.FC<ShopProps> = ({ onAddToCart, products = PRODUCTS }) => {
   const [filter, setFilter] = useState('All');
   const categories = ['All', 'Kitchen', 'Laundry', 'Cooling'];
 
+  // Filter out draft status items for regular store visitors
+  const publicProducts = products.filter(p => p.status !== 'draft');
+
   const filteredProducts = filter === 'All' 
-    ? PRODUCTS 
-    : PRODUCTS.filter(p => p.category === filter);
+    ? publicProducts 
+    : publicProducts.filter(p => p.category === filter);
 
   const formatIDR = (price: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -54,15 +59,22 @@ const Shop: React.FC<ShopProps> = ({ onAddToCart }) => {
                 <img 
                   src={product.image} 
                   alt={product.name} 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${
+                    product.status === 'sold out' ? 'grayscale opacity-75' : ''
+                  }`}
                 />
-                <div className="absolute top-4 left-4">
-                  <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
+                <div className="absolute top-4 left-4 flex flex-col gap-1.5 items-start">
+                  <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm ${
                     product.condition === 'Like New' ? 'bg-green-100 text-green-700' :
                     product.condition === 'Good' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'
                   }`}>
                     {product.condition}
                   </span>
+                  {product.status === 'sold out' && (
+                    <span className="px-3 py-1 bg-rose-600 text-white rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm font-sans">
+                      Sold Out
+                    </span>
+                  )}
                 </div>
               </div>
               <div className="p-6">
@@ -71,12 +83,18 @@ const Shop: React.FC<ShopProps> = ({ onAddToCart }) => {
                 <p className="text-slate-500 text-sm mb-4 line-clamp-2">{product.description}</p>
                 <div className="flex items-center justify-between mt-auto">
                   <span className="text-blue-900 font-bold text-xl">{formatIDR(product.price)}</span>
-                  <button 
-                    onClick={onAddToCart}
-                    className="w-10 h-10 bg-slate-900 text-white rounded-full flex items-center justify-center hover:bg-amber-600 transition-colors shadow-md"
-                  >
-                    <i className="fas fa-plus"></i>
-                  </button>
+                  {product.status === 'sold out' ? (
+                    <span className="px-3 py-1.5 bg-rose-50 text-rose-600 border border-rose-200 text-xs font-bold rounded-lg uppercase tracking-wider">
+                      Habis Terjual
+                    </span>
+                  ) : (
+                    <button 
+                      onClick={onAddToCart}
+                      className="w-10 h-10 bg-slate-900 text-white rounded-full flex items-center justify-center hover:bg-amber-600 transition-colors shadow-md"
+                    >
+                      <i className="fas fa-plus"></i>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

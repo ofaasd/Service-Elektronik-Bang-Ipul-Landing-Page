@@ -56,6 +56,7 @@ const Footer: React.FC<FooterProps> = ({ navigate }) => {
               <li><button onClick={() => navigate(View.BLOG)} className="hover:text-amber-500 transition-colors text-left">Blog Tips</button></li>
               <li><button onClick={() => navigate(View.ABOUT)} className="hover:text-amber-500 transition-colors text-left">Tentang Kami</button></li>
               <li><button onClick={() => navigate(View.CONTACT)} className="hover:text-amber-500 transition-colors text-left">Hubungi Kami</button></li>
+              <li className="pt-2 border-t border-slate-900"><button onClick={() => navigate(View.ADMIN)} className="text-amber-500 hover:text-amber-400 font-semibold transition-colors text-left flex items-center gap-1.5"><i className="fas fa-lock text-xs"></i> Kelola Web (Admin)</button></li>
             </ul>
           </div>
 

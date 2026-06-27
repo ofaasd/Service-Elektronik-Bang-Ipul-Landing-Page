@@ -1,28 +1,72 @@
 
 import React, { useState, useEffect } from 'react';
-import { View, Product, BlogPost } from './types';
-import { BLOG_POSTS, TESTIMONIALS } from './constants';
+import { View, Product, BlogPost, Testimonial } from './types';
+import { PRODUCTS, BLOG_POSTS, TESTIMONIALS, CONTACT_INFO } from './constants';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Services from './components/Services';
 import Shop from './components/Shop';
 import Blog from './components/Blog';
+import BlogDetail from './components/BlogDetail';
 import About from './components/About';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import AIHelper from './components/AIHelper';
+import AdminPanel from './components/AdminPanel';
+import { getProducts, getBlogs, getTestimonials } from './services/firebase';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>(View.LANDING);
   const [cartCount, setCartCount] = useState(0);
+  const [selectedBlogId, setSelectedBlogId] = useState<number | null>(null);
+
+  const [products, setProducts] = useState<Product[]>(PRODUCTS);
+  const [blogs, setBlogs] = useState<BlogPost[]>(BLOG_POSTS);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(TESTIMONIALS);
+
+  // Synchronize on application startup with Dynamic Database in Firestore
+  useEffect(() => {
+    let isMounted = true;
+    const fetchDynamicDatabase = async () => {
+      try {
+        const [cloudProducts, cloudBlogs, cloudTestimonials] = await Promise.all([
+          getProducts(),
+          getBlogs(),
+          getTestimonials()
+        ]);
+        if (isMounted) {
+          setProducts(cloudProducts);
+          setBlogs(cloudBlogs);
+          setTestimonials(cloudTestimonials);
+        }
+      } catch (error) {
+        console.error("Gagal mematangkan data dari cloud database:", error);
+      }
+    };
+    fetchDynamicDatabase();
+    return () => { isMounted = false; };
+  }, []);
 
   useEffect(() => {
     const handleHashChange = () => {
-      const hash = window.location.hash.replace('#', '') as View;
-      if (Object.values(View).includes(hash)) {
-        setCurrentView(hash);
+      const hash = window.location.hash.replace('#', '');
+      
+      if (Object.values(View).includes(hash as View)) {
+        setCurrentView(hash as View);
+        setSelectedBlogId(null);
+      } else if (hash.startsWith('blog-') || hash.startsWith('blog/')) {
+        const idStr = hash.split('-').pop() || hash.split('/').pop() || '';
+        const id = parseInt(idStr, 10);
+        if (!isNaN(id)) {
+          setSelectedBlogId(id);
+          setCurrentView(View.BLOG);
+        } else {
+          setCurrentView(View.LANDING);
+          setSelectedBlogId(null);
+        }
       } else {
         setCurrentView(View.LANDING);
+        setSelectedBlogId(null);
       }
     };
     window.addEventListener('hashchange', handleHashChange);
@@ -32,6 +76,10 @@ const App: React.FC = () => {
 
   const navigate = (view: View) => {
     window.location.hash = view;
+  };
+
+  const navigateToBlogDetail = (blogId: number) => {
+    window.location.hash = `blog-${blogId}`;
   };
 
   const addToCart = () => setCartCount(prev => prev + 1);
@@ -83,9 +131,9 @@ const App: React.FC = () => {
                 </div>
                 <div className="md:w-1/2 relative">
                   <img 
-                    src="https://images.unsplash.com/photo-1621905252507-b354bcadc691?auto=format&fit=crop&q=80&w=800" 
+                    src="https://github.com/user-attachments/assets/d935cf68-d6fc-406c-8b7f-a712842fbf47" 
                     alt="Bang Ipul at Work" 
-                    className="rounded-2xl shadow-2xl object-cover h-[400px] w-full"
+                    className="rounded-2xl shadow-2xl object-cover h-[500px] w-full"
                   />
                   <div className="absolute -bottom-6 -left-6 bg-blue-900 text-white p-6 rounded-xl hidden md:block">
                     <p className="text-3xl font-bold">1,000+</p>
@@ -103,7 +151,7 @@ const App: React.FC = () => {
                   <p className="text-slate-600">Apa kata mereka yang sudah merasakan layanan kami.</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  {TESTIMONIALS.map((t) => (
+                  {testimonials.map((t) => (
                     <div key={t.id} className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
                       <div className="flex items-center gap-4 mb-6">
                         <img src={t.image} alt={t.name} className="w-12 h-12 rounded-full object-cover" />
@@ -133,16 +181,16 @@ const App: React.FC = () => {
                   </div>
                   <button 
                     onClick={() => navigate(View.BLOG)}
-                    className="text-blue-900 font-bold border-b-2 border-blue-900 pb-1 hover:text-amber-600 hover:border-amber-600 transition-all"
+                    className="text-blue-900 font-bold border-b-2 border-blue-900 pb-1 hover:text-amber-600 hover:border-amber-600 transition-all cursor-pointer"
                   >
                     Lihat Semua Blog
                   </button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  {BLOG_POSTS.slice(0, 3).map((post) => (
-                    <div key={post.id} className="group cursor-pointer" onClick={() => navigate(View.BLOG)}>
+                  {blogs.slice(0, 3).map((post) => (
+                    <div key={post.id} className="group cursor-pointer" onClick={() => navigateToBlogDetail(post.id)}>
                       <div className="overflow-hidden rounded-2xl mb-4">
-                        <img src={post.image} alt={post.title} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <img src={post.image} alt={post.title} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
                       </div>
                       <h3 className="font-bold text-lg text-blue-950 mb-2 group-hover:text-amber-600 transition-colors">{post.title}</h3>
                       <p className="text-slate-500 text-sm line-clamp-2">{post.excerpt}</p>
@@ -159,7 +207,7 @@ const App: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                   <div>
                     <span className="text-amber-500 font-bold uppercase tracking-widest text-xs mb-4 block">Lokasi Workshop</span>
-                    <h2 className="heading-font text-4xl mb-8">Kunjungi Kami di Jakarta Selatan</h2>
+                    <h2 className="heading-font text-4xl mb-8">Kunjungi Kami Sekarang Juga </h2>
                     <div className="space-y-6">
                       <div className="flex gap-4">
                         <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -167,7 +215,7 @@ const App: React.FC = () => {
                         </div>
                         <div>
                           <h4 className="font-bold mb-1">Alamat Lengkap</h4>
-                          <p className="opacity-70 text-sm">Jl. Elektronik Raya No. 45, Kebayoran Baru, Jakarta Selatan, 12110.</p>
+                          <p className="opacity-70 text-sm">{CONTACT_INFO.address}</p>
                         </div>
                       </div>
                       <div className="flex gap-4">
@@ -176,7 +224,7 @@ const App: React.FC = () => {
                         </div>
                         <div>
                           <h4 className="font-bold mb-1">Email Kami</h4>
-                          <p className="opacity-70 text-sm">info@servicebangipul.com</p>
+                          <p className="opacity-70 text-sm">{CONTACT_INFO.email}</p>
                         </div>
                       </div>
                       <div className="flex gap-4">
@@ -185,12 +233,12 @@ const App: React.FC = () => {
                         </div>
                         <div>
                           <h4 className="font-bold mb-1">WhatsApp Center</h4>
-                          <p className="opacity-70 text-sm">0812-3456-7890</p>
+                          <p className="opacity-70 text-sm">{CONTACT_INFO.whatsapp}</p>
                         </div>
                       </div>
                     </div>
                     <div className="mt-10 flex gap-4">
-                      <a href="https://google.com/maps?q=service+elektronik+jakarta+selatan" target="_blank" className="px-6 py-3 bg-white text-slate-900 rounded-xl font-bold hover:bg-amber-500 hover:text-white transition-all">
+                      <a href={CONTACT_INFO.googleMapsUrl} target="_blank" rel="noreferrer" className="px-6 py-3 bg-white text-slate-900 rounded-xl font-bold hover:bg-amber-500 hover:text-white transition-all">
                         Buka di Google Maps
                       </a>
                     </div>
@@ -198,7 +246,7 @@ const App: React.FC = () => {
                   <div className="rounded-3xl overflow-hidden h-[400px] shadow-2xl border-4 border-white/10">
                     <iframe 
                       title="Lokasi Bang Ipul"
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126906.18224536965!2d106.71967735398687!3d-6.287661747805178!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f1873173d123%3A0x6a1a7c7336183492!2sSouth%20Jakarta%2C%20South%20Jakarta%20City%2C%20Jakarta!5e0!3m2!1sen!2sid!4v1711200000000!5m2!1sen!2sid"
+                      src={CONTACT_INFO.mapEmbedUrl}
                       width="100%" 
                       height="100%" 
                       style={{ border: 0 }} 
@@ -212,10 +260,41 @@ const App: React.FC = () => {
           </>
         )}
 
-        {currentView === View.SHOP && <Shop onAddToCart={addToCart} />}
-        {currentView === View.BLOG && <Blog />}
+        {currentView === View.SHOP && <Shop onAddToCart={addToCart} products={products} />}
+        {currentView === View.BLOG && (
+          selectedBlogId !== null ? (
+            (() => {
+              const selectedPost = blogs.find(b => b.id === selectedBlogId);
+              if (selectedPost) {
+                return (
+                  <BlogDetail 
+                    post={selectedPost} 
+                    allBlogs={blogs} 
+                    onBack={() => navigate(View.BLOG)} 
+                    onSelectBlog={navigateToBlogDetail}
+                  />
+                );
+              } else {
+                return <Blog blogs={blogs} onSelectBlog={navigateToBlogDetail} />;
+              }
+            })()
+          ) : (
+            <Blog blogs={blogs} onSelectBlog={navigateToBlogDetail} />
+          )
+        )}
         {currentView === View.ABOUT && <About />}
         {currentView === View.CONTACT && <Contact />}
+        {currentView === View.ADMIN && (
+          <AdminPanel 
+            products={products} 
+            setProducts={setProducts} 
+            blogs={blogs} 
+            setBlogs={setBlogs} 
+            testimonials={testimonials}
+            setTestimonials={setTestimonials}
+            onGoBack={() => navigate(View.LANDING)} 
+          />
+        )}
       </main>
 
       <AIHelper />

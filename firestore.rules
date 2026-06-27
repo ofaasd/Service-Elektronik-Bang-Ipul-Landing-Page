@@ -1,0 +1,62 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Centrally managed Admin concept based on verified email from runtime metadata
+    function isAdmin() {
+      return request.auth != null 
+        && request.auth.token.email == "ofaasd@gmail.com" 
+        && request.auth.token.email_verified == true;
+    }
+
+    // Helper to validate generic string structures
+    function isValidString(val, maxBytes) {
+      return val is string && val.size() <= maxBytes;
+    }
+
+    match /contacts/{contactId} {
+      // Allow creation by any website visitor with rigorous schema check
+      allow create: if request.resource.data.name is string 
+                   && request.resource.data.name.size() <= 200
+                   && request.resource.data.phone is string
+                   && request.resource.data.phone.size() <= 100
+                   && request.resource.data.deviceType is string
+                   && request.resource.data.deviceType.size() <= 200
+                   && request.resource.data.description is string
+                   && request.resource.data.description.size() <= 5000
+                   && request.resource.data.status is string
+                   && request.resource.data.status in ['pending', 'contacted', 'completed'];
+
+      // ONLY authorized verified Admin can inspect customer PII and manage service entries
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /products/{productId} {
+      // Transparent reads for visitors
+      allow read: if true;
+      
+      // ONLY Admin can modify inventory
+      allow write: if isAdmin();
+    }
+
+    match /blogs/{blogId} {
+      // Transparent reads for educational articles
+      allow read: if true;
+      
+      // ONLY Admin can publish or modify blogs
+      allow write: if isAdmin();
+    }
+
+    match /testimonials/{testimonialId} {
+      // Transparent reads for visitor reviews
+      allow read: if true;
+      
+      // ONLY Admin can publish or manage testimonials
+      allow write: if isAdmin();
+    }
+  }
+}
